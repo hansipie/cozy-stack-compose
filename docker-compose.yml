@@ -54,6 +54,6 @@ services:
       - ./volumes/caddy/etc:/etc/caddy
       - ./files/Caddyfile:/etc/caddy/Caddyfile
     ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
+      - "81:80"
+      - "444:443"
+      - "444:443/udp"
