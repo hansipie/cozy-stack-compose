@@ -21,6 +21,8 @@ services:
       timeout: 5s
       retries: 3
       start_period: 30s
+    networks:
+      - dokploy-network
 
   # Cozy Stack
   stack:
@@ -40,6 +42,8 @@ services:
       - ./volumes/cozy-stack/data:/var/lib/cozy/data
       - ./volumes/cozy-stack/config:/etc/cozy/
       - ./files/cozy.yml:/etc/cozy/cozy.yml
+    networks:
+      - dokploy-network
 
   # Reverse Proxy
   caddy:
@@ -53,7 +57,19 @@ services:
       - ./volumes/caddy/data:/data
       - ./volumes/caddy/etc:/etc/caddy
       - ./files/Caddyfile:/etc/caddy/Caddyfile
-    ports:
-      - "81:80"
-      - "444:443"
-      - "444:443/udp"
+    expose:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    networks:
+      - dokploy-network
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.caddy-app.rule=Host(`mycozy.ansicode.fr`)
+      - traefik.http.routers.caddy-app.entrypoints=web
+      - traefik.http.services.caddy-app.loadbalancer.server.port=80
+      - traefik.http.services.caddy-app.loadbalancer.server.port=443
+
+networks:
+  dokploy-network:
+    external: true
